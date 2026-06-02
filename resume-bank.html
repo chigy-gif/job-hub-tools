@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chigy N. — Resume Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --berry: #5B1F4A;
+    --berry-mid: #8B3A70;
+    --berry-light: #C47BA8;
+    --berry-faint: #F0E0EC;
+    --ink: #1A1218;
+    --muted: #7A6873;
+    --accent: #D4A853;
+    --border: #DDD0D8;
+    --success: #2a7a4b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--cream); font-family:'DM Sans',sans-serif; color:var(--ink); min-height:100vh; }
+
+  /* HEADER */
+  .header { background:var(--berry); padding:48px 40px 36px; position:relative; overflow:hidden; }
+  .header::before { content:''; position:absolute; top:-60px; right:-60px; width:260px; height:260px; border-radius:50%; background:rgba(212,168,83,0.12); }
+  .header-name { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:900; color:#fff; letter-spacing:-0.5px; line-height:1; }
+  .header-sub { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--berry-light); letter-spacing:0.15em; text-transform:uppercase; margin-top:8px; }
+  .header-desc { font-size:0.85rem; color:rgba(255,255,255,0.5); margin-top:10px; max-width:520px; line-height:1.5; }
+
+  /* TABS */
+  .tabs-wrapper { background:var(--berry); padding:0 40px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; gap:4px; overflow-x:auto; }
+  .tab { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); padding:14px 18px; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; }
+  .tab:hover { color:rgba(255,255,255,0.75); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+  /* MAIN */
+  .main { padding:40px; max-width:980px; }
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* JOB CARD */
+  .job-card { background:#fff; border:1px solid var(--border); border-radius:12px; margin-bottom:28px; overflow:hidden; }
+  .job-header { background:var(--berry-faint); padding:20px 24px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .job-company { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--berry); }
+  .job-role { font-size:0.82rem; color:var(--muted); margin-top:3px; font-weight:500; }
+  .job-meta { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.05em; text-align:right; }
+  .job-body { padding:20px 24px; }
+
+  .bullets-group { margin-bottom:20px; }
+  .bullets-label { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--accent); font-weight:500; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .bullets-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .bullet-list { list-style:none; }
+  .bullet-item { display:flex; gap:10px; padding:8px 10px; border-radius:4px; font-size:0.845rem; line-height:1.55; color:var(--ink); cursor:pointer; transition:background 0.15s; }
+  .bullet-item:hover { background:var(--berry-faint); }
+  .bullet-item .dot { width:5px; height:5px; border-radius:50%; background:var(--berry-mid); flex-shrink:0; margin-top:7px; }
+  .bullet-item .bullet-text { flex:1; }
+  .bullet-item .angle-tag { font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--berry-light); background:var(--berry-faint); border:1px solid var(--border); border-radius:3px; padding:2px 6px; flex-shrink:0; margin-top:4px; white-space:nowrap; }
+  .bullet-item .copy-btn { opacity:0; font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--berry-mid); background:none; border:1px solid var(--berry-light); border-radius:3px; padding:2px 7px; cursor:pointer; flex-shrink:0; margin-top:3px; transition:opacity 0.15s,background 0.15s; }
+  .bullet-item:hover .copy-btn { opacity:1; }
+  .bullet-item .copy-btn:hover { background:var(--berry-faint); }
+  .bullet-item .copy-btn.copied { color:var(--success); border-color:var(--success); }
+  .bullet-item .delete-btn { opacity:0; font-family:'DM Mono',monospace; font-size:0.6rem; color:#c0392b; background:none; border:1px solid #c0392b; border-radius:3px; padding:2px 7px; cursor:pointer; flex-shrink:0; margin-top:3px; transition:opacity 0.15s; }
+  .bullet-item:hover .delete-btn { opacity:1; }
+
+  /* ANGLE FILTER PILLS */
+  .angle-filter { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+  .angle-pill { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.06em; text-transform:uppercase; padding:6px 14px; border-radius:20px; border:1px solid var(--border); background:#fff; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+  .angle-pill:hover { border-color:var(--berry-light); color:var(--berry); }
+  .angle-pill.active { background:var(--berry); color:#fff; border-color:var(--berry); }
+
+  /* SKILLS */
+  .skills-intro { font-size:0.85rem; color:var(--muted); margin-bottom:24px; line-height:1.6; }
+  .skill-category { margin-bottom:28px; }
+  .skill-category-title { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--berry); margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid var(--berry-faint); }
+  .skill-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .skill-pill { background:#fff; border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:0.8rem; color:var(--ink); cursor:pointer; transition:all 0.15s; }
+  .skill-pill:hover { background:var(--berry-faint); border-color:var(--berry-light); color:var(--berry); }
+  .skill-pill.copied { background:var(--berry); color:#fff; border-color:var(--berry); }
+
+  /* GENERATOR */
+  .gen-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:28px; margin-bottom:28px; }
+  .gen-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--berry); margin-bottom:6px; }
+  .gen-sub { font-size:0.82rem; color:var(--muted); margin-bottom:20px; line-height:1.5; }
+
+  .gen-row { display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .gen-select, .gen-job-select { font-family:'DM Sans',sans-serif; font-size:0.82rem; padding:10px 14px; border:1px solid var(--border); border-radius:8px; background:#fff; color:var(--ink); cursor:pointer; outline:none; transition:border-color 0.2s; flex:1; min-width:160px; }
+  .gen-select:focus, .gen-job-select:focus { border-color:var(--berry-mid); }
+
+  .gen-textarea { width:100%; min-height:120px; padding:12px 16px; border:1px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.84rem; color:var(--ink); background:#fff; resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.6; }
+  .gen-textarea:focus { border-color:var(--berry-mid); }
+  .gen-textarea::placeholder { color:var(--muted); }
+
+  .gen-btn { background:var(--berry); color:#fff; border:none; border-radius:8px; padding:12px 28px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; gap:8px; }
+  .gen-btn:hover { background:var(--berry-mid); }
+  .gen-btn:disabled { opacity:0.5; cursor:not-allowed; }
+  .gen-btn .spinner { width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+  .gen-btn.loading .spinner { display:block; }
+
+  .gen-results { margin-top:24px; }
+  .gen-results-title { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .gen-results-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .gen-bullet-item { display:flex; gap:10px; padding:10px 12px; border-radius:6px; font-size:0.845rem; line-height:1.6; border:1px solid var(--border); margin-bottom:8px; background:#FAFAFA; align-items:flex-start; }
+  .gen-bullet-item .dot { width:5px; height:5px; border-radius:50%; background:var(--berry-mid); flex-shrink:0; margin-top:8px; }
+  .gen-bullet-item .gen-bullet-text { flex:1; }
+  .gen-bullet-actions { display:flex; gap:6px; flex-shrink:0; padding-top:2px; }
+  .gen-save-btn { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--success); background:none; border:1px solid var(--success); border-radius:3px; padding:3px 9px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .gen-save-btn:hover { background:#edf7f1; }
+  .gen-save-btn.saved { background:var(--success); color:#fff; }
+  .gen-copy-btn { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--berry-mid); background:none; border:1px solid var(--berry-light); border-radius:3px; padding:3px 9px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .gen-copy-btn:hover { background:var(--berry-faint); }
+  .gen-copy-btn.copied { color:var(--success); border-color:var(--success); }
+
+  /* SEARCH */
+  .search-bar { width:100%; padding:11px 16px; border:1px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.85rem; background:#fff; color:var(--ink); margin-bottom:24px; outline:none; transition:border-color 0.2s; }
+  .search-bar:focus { border-color:var(--berry-mid); }
+  .search-bar::placeholder { color:var(--muted); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align:center; padding:36px; color:var(--muted); font-size:0.84rem; line-height:1.7; }
+  .empty-state strong { display:block; color:var(--berry); font-size:0.95rem; margin-bottom:6px; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:28px; right:28px; background:var(--berry); color:#fff; font-family:'DM Mono',monospace; font-size:0.72rem; letter-spacing:0.04em; padding:10px 18px; border-radius:6px; opacity:0; transform:translateY(8px); transition:all 0.2s; pointer-events:none; z-index:999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media(max-width:600px) { .main{padding:20px;} .header{padding:32px 20px 24px;} .tabs-wrapper{padding:0 20px;} .header-name{font-size:1.9rem;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-name">Chigy N.</div>
+  <div class="header-sub">Resume Bank &amp; Skills Library</div>
+  <div class="header-desc">All bullets organized by job and angle. Generate new ones from raw notes — saved bullets persist across sessions.</div>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tab active" onclick="showTab('bank','this')">Bullet Bank</div>
+  <div class="tab" onclick="showTab('generator','this')">✦ Generate Bullets</div>
+  <div class="tab" onclick="showTab('skills','this')">Skills Bank</div>
+</div>
+
+<div class="main">
+
+<!-- ======================== BULLET BANK ======================== -->
+<div id="bank" class="section active">
+
+  <div class="angle-filter" id="angleFilter">
+    <div class="angle-pill active" onclick="filterByAngle('all',this)">All</div>
+    <div class="angle-pill" onclick="filterByAngle('campaign',this)">Campaign Specialist</div>
+    <div class="angle-pill" onclick="filterByAngle('brand',this)">Brand</div>
+    <div class="angle-pill" onclick="filterByAngle('partnerships',this)">Partnerships</div>
+    <div class="angle-pill" onclick="filterByAngle('product',this)">Product Marketing</div>
+    <div class="angle-pill" onclick="filterByAngle('abm',this)">ABM</div>
+    <div class="angle-pill" onclick="filterByAngle('demandgen',this)">Demand Gen</div>
+    <div class="angle-pill" onclick="filterByAngle('other',this)">Other</div>
+    <div class="angle-pill" onclick="filterByAngle('generated',this)">✦ Generated</div>
+  </div>
+
+  <div id="bankContent"></div>
+</div>
+
+<!-- ======================== GENERATOR ======================== -->
+<div id="generator" class="section">
+  <div class="gen-card">
+    <div class="gen-title">Generate Bullets from Raw Notes</div>
+    <div class="gen-sub">Paste your raw notes, context, or rough ideas below. Select which job and angle this is for — the AI will turn it into polished resume bullets in your voice.</div>
+
+    <div class="gen-row">
+      <select class="gen-job-select" id="genJob">
+        <option value="SECU MD">SECU MD</option>
+        <option value="Publicis Sapient">Publicis Sapient</option>
+        <option value="Kepler Group">Kepler Group</option>
+        <option value="Beats (Apple)">Beats (Apple)</option>
+        <option value="Dr. Dennis Gross">Dr. Dennis Gross</option>
+      </select>
+      <select class="gen-select" id="genAngle">
+        <option value="campaign">Campaign Specialist</option>
+        <option value="brand">Brand</option>
+        <option value="partnerships">Partnerships</option>
+        <option value="product">Product Marketing</option>
+        <option value="abm">ABM</option>
+        <option value="demandgen">Demand Gen</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <textarea class="gen-textarea" id="genNotes" placeholder="e.g. 'worked on a credit card pre-approval campaign, had to get sign off from compliance and the product team, it ended up driving around 2M in new card lines' — just type it out naturally, don't worry about formatting"></textarea>
+
+    <div style="margin-top:14px;">
+      <button class="gen-btn" id="genBtn" onclick="generateBullets()">
+        <span class="spinner"></span>
+        <span class="gen-btn-label">Generate Bullets</span>
+      </button>
+    </div>
+
+    <div class="gen-results" id="genResults" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ======================== SKILLS BANK ======================== -->
+<div id="skills" class="section">
+  <p class="skills-intro">Every skill pulled from across all resume versions. Click any pill to copy it.</p>
+  <input class="search-bar" type="text" placeholder="Search skills..." oninput="filterSkills(this.value)">
+  <div id="skills-container">
+    <div class="skill-category"><div class="skill-category-title">Core / Campaign Strategy</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Campaign Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Multi-Channel Campaign Coordination</span>
+      <span class="skill-pill" onclick="copySkill(this)">Integrated Marketing</span>
+      <span class="skill-pill" onclick="copySkill(this)">GTM Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">Brand Marketing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Brand Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">Brand Partnerships</span>
+      <span class="skill-pill" onclick="copySkill(this)">Growth Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">Demand Generation</span>
+      <span class="skill-pill" onclick="copySkill(this)">Sales Enablement</span>
+      <span class="skill-pill" onclick="copySkill(this)">CRM & Lifecycle Marketing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Marketing Automation</span>
+      <span class="skill-pill" onclick="copySkill(this)">Performance Reporting</span>
+      <span class="skill-pill" onclick="copySkill(this)">Consumer Insights</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">ABM & B2B</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Account-Based Marketing (ABM)</span>
+      <span class="skill-pill" onclick="copySkill(this)">1:Few ABM Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">Persona Development</span>
+      <span class="skill-pill" onclick="copySkill(this)">Target Account Identification</span>
+      <span class="skill-pill" onclick="copySkill(this)">Executive Persona Targeting (CTO/CXO)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Customer Journey Mapping</span>
+      <span class="skill-pill" onclick="copySkill(this)">Lead Nurture Copywriting</span>
+      <span class="skill-pill" onclick="copySkill(this)">Pipeline Operations</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Paid Media & Digital</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Paid Social (LinkedIn, Meta)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Paid Search (Google Ads)</span>
+      <span class="skill-pill" onclick="copySkill(this)">TikTok Ads</span>
+      <span class="skill-pill" onclick="copySkill(this)">A/B Testing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Campaign QA & Trafficking</span>
+      <span class="skill-pill" onclick="copySkill(this)">Creative Optimization</span>
+      <span class="skill-pill" onclick="copySkill(this)">SEO / Keyword Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">CTR Optimization</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Email & Content</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Email Marketing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Email Campaign Deployment (HubSpot)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Audience Segmentation</span>
+      <span class="skill-pill" onclick="copySkill(this)">Content Strategy</span>
+      <span class="skill-pill" onclick="copySkill(this)">Creative Briefing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Copywriting</span>
+      <span class="skill-pill" onclick="copySkill(this)">Brand Voice & Governance</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Events & Field Marketing</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Event Marketing</span>
+      <span class="skill-pill" onclick="copySkill(this)">Field Operations</span>
+      <span class="skill-pill" onclick="copySkill(this)">Brand Activation</span>
+      <span class="skill-pill" onclick="copySkill(this)">Ambassador Program Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Event Logistics & Execution</span>
+      <span class="skill-pill" onclick="copySkill(this)">Product Launch Support</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Operations & Project Management</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Project Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Vendor Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Cross-Functional Collaboration</span>
+      <span class="skill-pill" onclick="copySkill(this)">Stakeholder Communication</span>
+      <span class="skill-pill" onclick="copySkill(this)">SOP Development</span>
+      <span class="skill-pill" onclick="copySkill(this)">Workflow Automation</span>
+      <span class="skill-pill" onclick="copySkill(this)">Digital Asset Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Budget & Invoicing Management</span>
+      <span class="skill-pill" onclick="copySkill(this)">Reputation Management</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Research & Analytics</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">Market Research</span>
+      <span class="skill-pill" onclick="copySkill(this)">Competitive Analysis</span>
+      <span class="skill-pill" onclick="copySkill(this)">Data Synthesis</span>
+      <span class="skill-pill" onclick="copySkill(this)">Consumer Survey Research (Qualtrics)</span>
+      <span class="skill-pill" onclick="copySkill(this)">KPI Tracking & Reporting</span>
+      <span class="skill-pill" onclick="copySkill(this)">Campaign Performance Analysis</span>
+      <span class="skill-pill" onclick="copySkill(this)">Trend Analysis (SEMrush / 6Sense)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Sentiment Analysis</span>
+    </div></div>
+    <div class="skill-category"><div class="skill-category-title">Tech Tools</div><div class="skill-grid">
+      <span class="skill-pill" onclick="copySkill(this)">HubSpot</span>
+      <span class="skill-pill" onclick="copySkill(this)">Salesforce</span>
+      <span class="skill-pill" onclick="copySkill(this)">6Sense</span>
+      <span class="skill-pill" onclick="copySkill(this)">Birdeye</span>
+      <span class="skill-pill" onclick="copySkill(this)">SEMrush</span>
+      <span class="skill-pill" onclick="copySkill(this)">Google Analytics (GA4)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Google Ads</span>
+      <span class="skill-pill" onclick="copySkill(this)">LinkedIn Ads</span>
+      <span class="skill-pill" onclick="copySkill(this)">Meta Ads</span>
+      <span class="skill-pill" onclick="copySkill(this)">Qualtrics</span>
+      <span class="skill-pill" onclick="copySkill(this)">Asana</span>
+      <span class="skill-pill" onclick="copySkill(this)">Jira</span>
+      <span class="skill-pill" onclick="copySkill(this)">Confluence</span>
+      <span class="skill-pill" onclick="copySkill(this)">SharePoint</span>
+      <span class="skill-pill" onclick="copySkill(this)">Excel (Pivot Tables / VLOOKUP)</span>
+      <span class="skill-pill" onclick="copySkill(this)">Google Workspace</span>
+      <span class="skill-pill" onclick="copySkill(this)">Canva</span>
+      <span class="skill-pill" onclick="copySkill(this)">AI Tools</span>
+    </div></div>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STORAGE KEY ───────────────────────────────────────────────
+const STORAGE_KEY = 'chigy_resume_bank_v2';
+
+// ─── SEED DATA ─────────────────────────────────────────────────
+const SEED = [
+  // SECU MD — Campaign
+  { id:'s1', job:'SECU MD', angle:'campaign', text:'Lead multi-channel campaigns for a 250K+ member base, ensuring seamless brand consistency across 25+ local branches and digital channels.', generated:false },
+  { id:'s2', job:'SECU MD', angle:'campaign', text:'Execute omnichannel marketing campaigns across digital, social, direct mail, and retail channels for a 250K+ member base, building segment-based messaging for audiences including business banking.', generated:false },
+  { id:'s3', job:'SECU MD', angle:'campaign', text:'Execute marketing campaigns across digital, social, direct mail, and retail channels for a 250K+ member base, tailoring programs to distinct segments including business banking, community engagement, and university.', generated:false },
+  { id:'s4', job:'SECU MD', angle:'campaign', text:'Coordinate development of a pre-approval lending campaign across all products, managing creative and copy approvals, stakeholder reviews, and cross-functional alignment — driving $2.25M in new card lines.', generated:false },
+  { id:'s5', job:'SECU MD', angle:'campaign', text:'Track and analyze critical campaign KPIs, creating performance reports and providing recommendations for optimizations to digital marketing managers.', generated:false },
+  { id:'s6', job:'SECU MD', angle:'campaign', text:'Analyze campaign KPIs and lead quality, delivering actionable reports that influenced a 10% increase in membership MoM.', generated:false },
+  // SECU MD — Brand
+  { id:'s7', job:'SECU MD', angle:'brand', text:'Redesigned the creative asset library via SharePoint, ensuring version control and seamless access for the organization\'s stakeholders.', generated:false },
+  { id:'s8', job:'SECU MD', angle:'brand', text:'Developed SOPs and spec sheets for ongoing processes to standardize workflows.', generated:false },
+  { id:'s9', job:'SECU MD', angle:'brand', text:'Developed creative briefs for internal teams and external partners, translating business objectives into brand and campaign assets.', generated:false },
+  { id:'s10', job:'SECU MD', angle:'brand', text:'Supported the launch of a student ambassador program across Maryland universities, developing content strategy that generated 10K+ views.', generated:false },
+  { id:'s11', job:'SECU MD', angle:'brand', text:'Led a scaled review generation campaign, leveraging customer insights to improve star ratings and strengthen local brand trust.', generated:false },
+  { id:'s12', job:'SECU MD', angle:'brand', text:'Scaled an automated review generation campaign, deploying 1,000+ review requests per month to improve ratings and strengthen brand trust.', generated:false },
+  // SECU MD — Partnerships
+  { id:'s13', job:'SECU MD', angle:'partnerships', text:'Owned planning and execution of member and employee events of up to 500 attendees, managing promotion, collateral development, and logistics.', generated:false },
+  { id:'s14', job:'SECU MD', angle:'partnerships', text:'Act as primary liaison for external vendors; managing deliverables, meeting schedules, and budget invoicing.', generated:false },
+  { id:'s15', job:'SECU MD', angle:'partnerships', text:'Supported the launch of a student ambassador program across Maryland universities, developing content strategy that generated 10K+ views.', generated:false },
+  // SECU MD — ABM / Demand Gen
+  { id:'s16', job:'SECU MD', angle:'abm', text:'Collaborate with business banking team to standardize HubSpot pipeline conventions for event-sourced opportunities.', generated:false },
+  { id:'s17', job:'SECU MD', angle:'demandgen', text:'Developed a "dinner series" loyalty campaign targeting long-term, high value members, owning outreach strategy, collateral development, and venue sourcing.', generated:false },
+  { id:'s18', job:'SECU MD', angle:'demandgen', text:'Support campaign deployment and performance tracking via HubSpot, monitoring key metrics and reporting insights across member communications.', generated:false },
+  { id:'s19', job:'SECU MD', angle:'demandgen', text:'Coordinate development of a pre-approval lending campaign across all products, managing creative and copy approvals, stakeholder reviews, and cross-functional alignment — driving $2.25M in new card lines.', generated:false },
+  // SECU MD — Product Marketing
+  { id:'s20', job:'SECU MD', angle:'product', text:'Coordinate development of a pre-approval lending campaign across all products, managing creative and copy approvals, stakeholder reviews, and cross-functional alignment — driving $2.25M in new card lines.', generated:false },
+  { id:'s21', job:'SECU MD', angle:'product', text:'Work with internal stakeholders across operations, compliance, and business banking to manage timelines, approvals, and deliverables for marketing initiatives.', generated:false },
+
+  // PUBLICIS SAPIENT — ABM
+  { id:'p1', job:'Publicis Sapient', angle:'abm', text:'Leveraged 6Sense and SEMrush to identify target account opportunities, analyze market trends, and inform account-based messaging development.', generated:false },
+  { id:'p2', job:'Publicis Sapient', angle:'abm', text:'Supported 1:few ABM strategies by tailoring LinkedIn messaging to specific industry pain points.', generated:false },
+  { id:'p3', job:'Publicis Sapient', angle:'abm', text:'Leveraged 6Sense and SEMrush to identify executive-level personas including CTO and CXO decision-makers, informing ABM messaging strategies.', generated:false },
+  { id:'p4', job:'Publicis Sapient', angle:'abm', text:'Developed customer journey maps in Confluence to blueprint touchpoint sequences across email, landing pages, and digital channels.', generated:false },
+  // PUBLICIS — Campaign
+  { id:'p5', job:'Publicis Sapient', angle:'campaign', text:'Supported LinkedIn paid social campaign execution including performance reporting, creative auditing, and optimization recommendations.', generated:false },
+  { id:'p6', job:'Publicis Sapient', angle:'campaign', text:'Assisted in trafficking 3 paid social campaigns and conducted a brand audit for paid advertising to ensure message consistency.', generated:false },
+  { id:'p7', job:'Publicis Sapient', angle:'campaign', text:'Drafted email copy for a lead nurture campaign, tailoring messaging to distinct audience segments.', generated:false },
+  // PUBLICIS — Brand
+  { id:'p8', job:'Publicis Sapient', angle:'brand', text:'Developed a GTM plan for healthcare vertical, focusing on strengthening brand identity.', generated:false },
+  { id:'p9', job:'Publicis Sapient', angle:'brand', text:'Facilitated a comprehensive brand and competitive audit during a major rebrand, developing a framework to synthesize data.', generated:false },
+  { id:'p10', job:'Publicis Sapient', angle:'brand', text:'Drafted targeted brand messaging and value propositions for the healthcare vertical, tailoring communications to resonate with key C-suite stakeholders.', generated:false },
+  // PUBLICIS — Product Marketing
+  { id:'p11', job:'Publicis Sapient', angle:'product', text:'Developed a comprehensive mock GTM strategy for health tech vertical, mapping firm-wide technical capabilities to emerging trends.', generated:false },
+  { id:'p12', job:'Publicis Sapient', angle:'product', text:'Developed pitch decks and industry briefs for consulting teams.', generated:false },
+  // PUBLICIS — Demand Gen
+  { id:'p13', job:'Publicis Sapient', angle:'demandgen', text:'Leveraged 6Sense and SEMrush to perform trend analysis, identifying growth opportunities.', generated:false },
+  { id:'p14', job:'Publicis Sapient', angle:'demandgen', text:'Leveraged 6Sense and SEMrush to identify target account opportunities, analyze market trends, and inform account-based messaging development.', generated:false },
+
+  // KEPLER — Campaign
+  { id:'k1', job:'Kepler Group', angle:'campaign', text:'Built and trafficked a $10K Google Paid Search campaign, including QA checks to ensure proper keyword insertion and tracking setup.', generated:false },
+  { id:'k2', job:'Kepler Group', angle:'campaign', text:'Built and trafficked a $10K Google Paid Search campaign for a nonprofit client, including QA checks and an A/B testing framework to improve client page discoverability by 25%.', generated:false },
+  { id:'k3', job:'Kepler Group', angle:'campaign', text:'Implemented an A/B testing framework to improve CTR and optimize messaging, providing summaries for client reviews.', generated:false },
+  { id:'k4', job:'Kepler Group', angle:'demandgen', text:'Built and trafficked a $10K Google Paid Search campaign for a nonprofit client, including QA checks to improve client page discoverability by 25%.', generated:false },
+
+  // BEATS — Product Marketing
+  { id:'b1', job:'Beats (Apple)', angle:'product', text:'Used Qualtrics to synthesize data from 50+ consumer surveys to define target demographics for a global product launch; presented findings to consumer insights team.', generated:false },
+  { id:'b2', job:'Beats (Apple)', angle:'product', text:'Synthesized data from 50+ consumer surveys to define target demographics for a global product launch, directly influencing messaging strategy across audiences.', generated:false },
+  { id:'b3', job:'Beats (Apple)', angle:'product', text:'Aided in the operational development of GTM plan for a major product launch by tracking insights from 50+ surveys to show target customer demographics.', generated:false },
+  // BEATS — Brand
+  { id:'b4', job:'Beats (Apple)', angle:'brand', text:'Translated data from 50+ surveys and interviews into consumer personas identifying target customer demographics.', generated:false },
+  { id:'b5', job:'Beats (Apple)', angle:'brand', text:'Worked with creative team to ensure all work adhered to brand guidelines.', generated:false },
+
+  // DR DENNIS GROSS — Partnerships
+  { id:'d1', job:'Dr. Dennis Gross', angle:'partnerships', text:'Executed on-campus tabling and sampling events, including a slumber party mixer with multiple sorority chapters for a product launch, driving brand recognition among target consumers.', generated:false },
+  { id:'d2', job:'Dr. Dennis Gross', angle:'partnerships', text:'Created and published branded content as part of an ongoing ambassador relationship, maintaining brand voice across personal platforms.', generated:false },
+  { id:'d3', job:'Dr. Dennis Gross', angle:'partnerships', text:'Utilized social media outreach and partnerships with campus organizations to increase event registration by 40%.', generated:false },
+  // DENNIS — Brand
+  { id:'d4', job:'Dr. Dennis Gross', angle:'brand', text:'Planned and executed on-campus product launch events, coordinating timelines, logistics, and promotional materials.', generated:false },
+  { id:'d5', job:'Dr. Dennis Gross', angle:'brand', text:'Utilized social media outreach and partnerships with campus organizations to increase event registration by 40%.', generated:false },
+];
+
+const ANGLE_LABELS = { campaign:'Campaign Specialist', brand:'Brand', partnerships:'Partnerships', product:'Product Marketing', abm:'ABM', demandgen:'Demand Gen', other:'Other', generated:'Generated' };
+const JOBS = ['SECU MD','Publicis Sapient','Kepler Group','Beats (Apple)','Dr. Dennis Gross'];
+
+// ─── STATE ─────────────────────────────────────────────────────
+let bullets = [];
+let activeAngle = 'all';
+
+function loadBullets() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { bullets = JSON.parse(raw); }
+    else { bullets = SEED.map(b => ({...b})); saveBullets(); }
+  } catch(e) { bullets = SEED.map(b => ({...b})); }
+}
+function saveBullets() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(bullets)); } catch(e) {}
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ─── RENDER BANK ───────────────────────────────────────────────
+function renderBank() {
+  const container = document.getElementById('bankContent');
+  let filtered = activeAngle === 'all' ? bullets :
+    activeAngle === 'generated' ? bullets.filter(b => b.generated) :
+    bullets.filter(b => b.angle === activeAngle);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><strong>Nothing here yet</strong>${activeAngle === 'generated' ? 'Generate some bullets using the ✦ Generate tab and save them here.' : 'No bullets tagged for this angle yet.'}</div>`;
+    return;
+  }
+
+  // group by job
+  const byJob = {};
+  JOBS.forEach(j => { byJob[j] = filtered.filter(b => b.job === j); });
+
+  let html = '';
+  JOBS.forEach(job => {
+    const items = byJob[job];
+    if (!items.length) return;
+
+    // group by angle within job
+    const byAngle = {};
+    items.forEach(b => {
+      if (!byAngle[b.angle]) byAngle[b.angle] = [];
+      byAngle[b.angle].push(b);
+    });
+
+    const jobMeta = { 'SECU MD':'Financial Services, Remote · March 2025–Present', 'Publicis Sapient':'Tech Consulting, New York · May–Aug 2024', 'Kepler Group':'Advertising Agency, Remote · Aug–Dec 2024', 'Beats (Apple)':'Consumer Electronics, New York · 2023–2024', 'Dr. Dennis Gross':'Beauty/CPG, New York · 2023–2024' };
+    const jobRole = { 'SECU MD':'Marketing Coordinator', 'Publicis Sapient':'ABM & Brand Marketing Intern', 'Kepler Group':'Digital Marketing Fellow', 'Beats (Apple)':'Consumer Insights & Brand Strategy Intern', 'Dr. Dennis Gross':'Marketing & Events Intern / Student Ambassador' };
+
+    html += `<div class="job-card"><div class="job-header"><div class="job-title-block"><div class="job-company">${job}</div><div class="job-role">${jobRole[job]}</div></div><div class="job-meta">${jobMeta[job]}</div></div><div class="job-body">`;
+
+    Object.keys(byAngle).forEach(angle => {
+      html += `<div class="bullets-group"><div class="bullets-label">${ANGLE_LABELS[angle] || angle}</div><ul class="bullet-list">`;
+      byAngle[angle].forEach(b => {
+        html += `<li class="bullet-item" data-id="${b.id}">
+          <span class="dot"></span>
+          <span class="bullet-text">${escHtml(b.text)}</span>
+          <button class="copy-btn" onclick="copyBulletById('${b.id}',this)">copy</button>
+          <button class="delete-btn" onclick="deleteBullet('${b.id}')">✕</button>
+        </li>`;
+      });
+      html += `</ul></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function filterByAngle(angle, el) {
+  activeAngle = angle;
+  document.querySelectorAll('.angle-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderBank();
+}
+
+function copyBulletById(id, btn) {
+  const b = bullets.find(x => x.id === id);
+  if (!b) return;
+  copyToClipboard(b.text);
+  btn.textContent = '✓'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+}
+
+function deleteBullet(id) {
+  bullets = bullets.filter(b => b.id !== id);
+  saveBullets();
+  renderBank();
+  showToast('Bullet removed');
+}
+
+// ─── GENERATOR ─────────────────────────────────────────────────
+async function generateBullets() {
+  const notes = document.getElementById('genNotes').value.trim();
+  const job = document.getElementById('genJob').value;
+  const angle = document.getElementById('genAngle').value;
+  if (!notes) { showToast('Add some notes first'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  btn.querySelector('.gen-btn-label').textContent = 'Generating...';
+
+  const angleLabel = ANGLE_LABELS[angle];
+  const prompt = `You are a resume writing expert helping an early-career marketer named Chigy Nwogu polish their resume bullets. Their background: Marketing Coordinator at SECU MD (credit union), previously at Publicis Sapient (ABM/brand intern), Kepler Group (paid search fellow), Beats by Dre (consumer insights intern), Dr. Dennis Gross (events/ambassador). NYU Sociology grad. Honest, execution-focused voice — never overclaims ownership or seniority.
+
+The user has raw notes about their experience at ${job}, and wants bullets tailored for a ${angleLabel} role angle.
+
+Raw notes: "${notes}"
+
+Generate 3–5 polished resume bullets. Rules:
+- Start each with a strong action verb
+- Be specific and honest — don't inflate ownership beyond what the notes suggest
+- Quantify where the notes support it; don't invent numbers
+- Tailor language toward a ${angleLabel} role (${angle === 'abm' ? 'emphasize account targeting, 6Sense/SEMrush, B2B strategy' : angle === 'campaign' ? 'emphasize execution, cross-channel coordination, performance' : angle === 'brand' ? 'emphasize brand consistency, messaging, creative ops' : angle === 'partnerships' ? 'emphasize relationship management, co-marketing, activations' : angle === 'product' ? 'emphasize GTM, positioning, cross-functional collaboration, consumer insight' : angle === 'demandgen' ? 'emphasize pipeline, lead gen, funnel metrics, automation' : 'be broadly applicable'})
+- Match Chigy's natural voice: specific, direct, no corporate fluff
+- Return ONLY a JSON array of strings, no markdown, no preamble. Example: ["Bullet one here.","Bullet two here."]`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{ role:'user', content:prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.find(c => c.type === 'text')?.text || '[]';
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const generated = JSON.parse(clean);
+    renderGenResults(generated, job, angle);
+  } catch(e) {
+    showToast('Generation failed — try again');
+  }
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+  btn.querySelector('.gen-btn-label').textContent = 'Generate Bullets';
+}
+
+function renderGenResults(bullets_arr, job, angle) {
+  const container = document.getElementById('genResults');
+  container.style.display = 'block';
+
+  let html = `<div class="gen-results-title">Generated Bullets — ${job} · ${ANGLE_LABELS[angle]}</div>`;
+  bullets_arr.forEach((text, i) => {
+    const tmpId = 'gen_' + uid();
+    html += `<div class="gen-bullet-item" data-tmp="${tmpId}">
+      <span class="dot"></span>
+      <span class="gen-bullet-text">${escHtml(text)}</span>
+      <div class="gen-bullet-actions">
+        <button class="gen-save-btn" onclick="saveGenBullet('${tmpId}','${escAttr(job)}','${angle}',this)">+ Save</button>
+        <button class="gen-copy-btn" onclick="copyGenBullet('${tmpId}',this)">copy</button>
+      </div>
+    </div>`;
+  });
+
+  // store temporarily
+  window._genTemp = window._genTemp || {};
+  bullets_arr.forEach((text, i) => {
+    // we'll key by the tmpId embedded above — rebuild
+  });
+  // simpler: store array indexed by position, keyed by order
+  window._genBulletsArr = bullets_arr;
+  window._genJob = job;
+  window._genAngle = angle;
+
+  container.innerHTML = html;
+
+  // re-attach tmpIds properly
+  const items = container.querySelectorAll('.gen-bullet-item');
+  items.forEach((el, i) => {
+    const tid = el.dataset.tmp;
+    window._genTemp = window._genTemp || {};
+    window._genTemp[tid] = bullets_arr[i];
+  });
+}
+
+function saveGenBullet(tmpId, job, angle, btn) {
+  const text = window._genTemp?.[tmpId];
+  if (!text) return;
+  const newB = { id: uid(), job, angle, text, generated: true };
+  bullets.push(newB);
+  saveBullets();
+  btn.textContent = '✓ Saved';
+  btn.classList.add('saved');
+  btn.disabled = true;
+  showToast('Bullet saved to bank');
+}
+
+function copyGenBullet(tmpId, btn) {
+  const text = window._genTemp?.[tmpId];
+  if (!text) return;
+  copyToClipboard(text);
+  btn.textContent = '✓'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
+}
+
+// ─── SKILLS ────────────────────────────────────────────────────
+function filterSkills(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('.skill-pill').forEach(p => { p.style.display = p.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+  document.querySelectorAll('.skill-category').forEach(c => { c.style.display = Array.from(c.querySelectorAll('.skill-pill')).some(p => p.style.display !== 'none') ? '' : 'none'; });
+}
+function copySkill(pill) { copyToClipboard(pill.textContent.trim()); pill.classList.add('copied'); setTimeout(() => pill.classList.remove('copied'), 1600); }
+
+// ─── UTILS ─────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).catch(() => { const ta = document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); });
+  showToast('Copied to clipboard');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(str) { return str.replace(/'/g,"\\'"); }
+
+// ─── INIT ──────────────────────────────────────────────────────
+loadBullets();
+renderBank();
+</script>
+</body>
+</html>
